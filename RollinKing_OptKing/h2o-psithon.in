@@ -1,0 +1,31 @@
+# From psi4/tests/opt1
+REF_NRE = 8.9064890670
+REF_HF_ENERGY = -74.965901192
+
+molecule h2o {
+     O
+     H 1 1.0
+     H 1 1.0 2 104.5
+}
+
+set {
+  diis false
+  basis sto-3g
+  e_convergence 10
+  d_convergence 10
+  scf_type pk
+}
+# Runs C++ optimizer
+#thisenergy = optimize('scf')
+#compare_values(REF_NRE, h2o.nuclear_repulsion_energy(), 3, "Nuclear repulsion energy")
+#compare_values(REF_HF_ENERGY, thisenergy, 6, "Reference energy")
+
+# Runs python optimizer
+import optking
+rval = optking.optimize_psi4('scf')
+
+nre = rval['trajectory'][-1]['properties']['nuclear_repulsion_energy']
+hf_energy = rval['energies'][-1]
+compare_values(REF_NRE, nre, 3, "Nuclear repulsion energy")
+compare_values(REF_HF_ENERGY, hf_energy, 6, "Reference energy")
+
